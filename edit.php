@@ -1,26 +1,39 @@
 <?php
-require ('koneksi.php');
-if (isset($_POST['update'])){
-    $userId=$_POST['txt_id'];
-    $userMail=$_POST['txt_email'];
-    $userPass=$_POST['txt_pass'];
-    $userName=$_POST['txt_nama'];
-    
-    $query="UPDATE user_detail SET user_password='$userPass', user_fullname='$userName' WHERE user_email ='$userMail'";
-    echo $query;
-    $result=mysqli_query($koneksi,$query);
-    header('Location home.php');   
+require('koneksi.php');
+if (isset($_POST['update'])) {
+    $userId = $_POST['txt_id'];
+    $userMail = $_POST['txt_email'];
+    $userPass = $_POST['txt_pass'];
+    $userName = $_POST['txt_nama'];
+
+    $query = "UPDATE user_detail SET user_password='$userPass', user_fullname='$userName' WHERE user_email ='$userMail'";
+    $result = mysqli_query($koneksi, $query);
+
+    if ($result) {
+        header('Location: home.php');
+        exit;
+    } else {
+        echo "Error updating record: " . mysqli_error($koneksi);
+    }
 }
+
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 if ($id !== null) {
-    $query="SELECT * FROM user_detail WHERE id='$id'";
-    $result=mysqli_query($koneksi,$query)or die (mysql_error());
-    while ($row=mysqli_fetch_array($result)){
-        $id=$row['id'];
-        $userMail=$row['user_email'];
-        $userPass=$row['user_password'];
-        $userName=$row['user_fullname'];
-    }  
+    $query = "SELECT * FROM user_detail WHERE id='$id'";
+    $result = mysqli_query($koneksi, $query) or die(mysqli_error($koneksi));
+
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_array($result)) {
+            $userId = $row['id'];
+            $userMail = $row['user_email'];
+            $userPass = $row['user_password'];
+            $userName = $row['user_fullname'];
+        }
+    } else {
+        echo "No user found with the provided ID";
+    }
+} else {
+    echo "No ID provided";
 }
 ?>
 <!DOCTYPE html>
